@@ -54,6 +54,14 @@ const intlMessages = defineMessages({
     id: 'app.whiteboard.toolbar.multiUserOff',
     description: 'Whiteboard toolbar turn multi-user off menu',
   },
+  toolbarPalmRejectionOn: {
+    id: 'app.whiteboard.toolbar.palmRejectionOn',
+    description: 'Whiteboard toolbar turn palm rejection on menu',
+  },
+  toolbarPalmRejectionOff: {
+    id: 'app.whiteboard.toolbar.palmRejectionOff',
+    description: 'Whiteboard toolbar turn palm rejection off menu',
+  },
   toolbarFontSize: {
     id: 'app.whiteboard.toolbar.fontSize',
     description: 'Whiteboard toolbar font size menu',
@@ -111,6 +119,8 @@ class WhiteboardToolbar extends Component {
       onBlurEnabled: true,
 
       panMode: false,
+
+      palmRejection: false,
     };
 
     this.displaySubMenu = this.displaySubMenu.bind(this);
@@ -119,6 +129,7 @@ class WhiteboardToolbar extends Component {
     this.handleUndo = this.handleUndo.bind(this);
     this.handleClearAll = this.handleClearAll.bind(this);
     this.handleSwitchWhiteboardMode = this.handleSwitchWhiteboardMode.bind(this);
+    this.handleSwitchPalmRejectionMode = this.handleSwitchPalmRejectionMode.bind(this);
     this.handleAnnotationChange = this.handleAnnotationChange.bind(this);
     this.handleThicknessChange = this.handleThicknessChange.bind(this);
     this.handleFontSizeChange = this.handleFontSizeChange.bind(this);
@@ -134,8 +145,9 @@ class WhiteboardToolbar extends Component {
   componentDidMount() {
     const { actions, multiUser, isPresenter } = this.props;
     const drawSettings = actions.getCurrentDrawSettings();
+    const palmRejectionMode = actions.getCurrentPalmRejectionMode();
     const {
-      annotationSelected, thicknessSelected, colorSelected, fontSizeSelected,
+      annotationSelected, thicknessSelected, colorSelected, fontSizeSelected, palmRejection,
     } = this.state;
 
     document.addEventListener('keydown', this.panOn);
@@ -163,6 +175,14 @@ class WhiteboardToolbar extends Component {
           textShapeActiveId: '',
         },
       );
+    }
+
+    if (palmRejectionMode) {
+      this.setState({
+        palmRejection: palmRejectionMode,
+      });
+    } else {
+      actions.setInitialPalmRejectionMode(palmRejection);
     }
 
     if (annotationSelected.value !== 'text') {
@@ -363,6 +383,22 @@ class WhiteboardToolbar extends Component {
     } = this.props;
 
     actions.changeWhiteboardMode(!multiUser, whiteboardId);
+  }
+
+  handleSwitchPalmRejectionMode() {
+    const {
+      actions,
+    } = this.props;
+
+    const {
+      palmRejection,
+    } = this.state;
+
+    actions.setPalmRejectionMode(!palmRejection);
+
+    this.setState({
+      palmRejection: !palmRejection,
+    });
   }
 
   // changes a current selected annotation both in the state and in the session
@@ -774,6 +810,28 @@ class WhiteboardToolbar extends Component {
     );
   }
 
+  renderPalmRejectionItem() {
+    const { intl, isMeteorConnected } = this.props;
+
+    const { palmRejection } = this.state;
+
+    return (
+      <ToolbarMenuItem
+        disabled={!isMeteorConnected}
+        label={palmRejection
+          ? intl.formatMessage(intlMessages.toolbarPalmRejectionOff)
+          : intl.formatMessage(intlMessages.toolbarPalmRejectionOn)
+        }
+        customIcon={palmRejection
+          ? <p>pr</p>
+          : <p>npr</p>
+        }
+        onItemClick={this.handleSwitchPalmRejectionMode}
+        className={styles.toolbarButton}
+      />
+    );
+  }
+
   render() {
     const { annotationSelected } = this.state;
     const { isPresenter } = this.props;
@@ -785,6 +843,7 @@ class WhiteboardToolbar extends Component {
           {this.renderColorItem()}
           {this.renderUndoItem()}
           {this.renderClearAllItem()}
+          {this.renderPalmRejectionItem()}
           {isPresenter ? this.renderMultiUserItem() : null}
         </div>
       </div>
