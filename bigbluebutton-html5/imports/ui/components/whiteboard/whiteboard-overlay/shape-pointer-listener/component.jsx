@@ -276,26 +276,24 @@ export default class ShapePointerListener extends Component {
     this.palmRejectionActivated = Storage.getItem(PALM_REJECTION_MODE);
     switch (event.pointerType) {
       case 'mouse': {
-        if (!this.palmRejectionActivated) {
-          const isLeftClick = event.button === 0;
-          const isRightClick = event.button === 2;
+        const isLeftClick = event.button === 0;
+        const isRightClick = event.button === 2;
 
-          if (!this.isDrawing) {
-            if (isLeftClick) {
-              window.addEventListener('pointerup', this.handlePointerUp);
-              window.addEventListener('pointermove', this.handlePointerMove);
+        if (!this.isDrawing) {
+          if (isLeftClick) {
+            window.addEventListener('pointerup', this.handlePointerUp);
+            window.addEventListener('pointermove', this.handlePointerMove);
 
-              const { clientX, clientY } = event;
-              this.commonDrawStartHandler(clientX, clientY);
-            }
-
-          // if you switch to a different window using Alt+Tab while mouse is down and release it
-          // it wont catch mouseUp and will keep tracking the movements. Thus we need this check.
-          } else if (isRightClick) {
-            // this.isDrawing = false;
-            this.sendLastMessage();
-            this.discardAnnotation();
+            const { clientX, clientY } = event;
+            this.commonDrawStartHandler(clientX, clientY);
           }
+
+        // if you switch to a different window using Alt+Tab while mouse is down and release it
+        // it wont catch mouseUp and will keep tracking the movements. Thus we need this check.
+        } else if (isRightClick) {
+          // this.isDrawing = false;
+          this.sendLastMessage();
+          this.discardAnnotation();
         }
         break;
       }
@@ -335,9 +333,7 @@ export default class ShapePointerListener extends Component {
   handlePointerUp(event) {
     switch (event.pointerType) {
       case 'mouse': {
-        if (!this.palmRejectionActivated) {
-          this.sendLastMessage();
-        }
+        this.sendLastMessage();
         break;
       }
       case 'pen': {
@@ -359,10 +355,8 @@ export default class ShapePointerListener extends Component {
   handlePointerMove(event) {
     switch (event.pointerType) {
       case 'mouse': {
-        if (!this.palmRejectionActivated) {
-          const { clientX, clientY } = event;
-          this.commonDrawMoveHandler(clientX, clientY);
-        }
+        const { clientX, clientY } = event;
+        this.commonDrawMoveHandler(clientX, clientY);
         break;
       }
       case 'pen': {
