@@ -822,10 +822,11 @@ class WhiteboardToolbar extends Component {
           ? intl.formatMessage(intlMessages.toolbarPalmRejectionOff)
           : intl.formatMessage(intlMessages.toolbarPalmRejectionOn)
         }
-        customIcon={palmRejection
+        icon={palmRejection ? 'palm_rejection' : 'no_palm_rejection'}
+        /* customIcon={palmRejection
           ? <p>pr</p>
           : <p>npr</p>
-        }
+        } */
         onItemClick={this.handleSwitchPalmRejectionMode}
         className={styles.toolbarButton}
       />

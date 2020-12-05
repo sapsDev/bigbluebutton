@@ -285,3 +285,12 @@
 .icon-bbb-closed_caption:before {
   content: "\e957";
 }
+.icon-bbb-alert:before {
+  content: "\e958";
+}
+.icon-bbb-palm_rejection:before {
+  content: "\e959";
+}
+.icon-bbb-no_palm_rejection:before {
+  content: "\e95a";
+}
